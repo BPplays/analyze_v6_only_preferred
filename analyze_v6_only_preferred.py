@@ -80,7 +80,7 @@ def main(pcapfile):
     print("Flapping:", len(flapping))
     print(", ".join(flapping))
     
-    print("failed:", len(failed))
+    print("failed to analyze:", len(failed))
     for mac in failed:
         print("    "+mac)
 
