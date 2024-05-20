@@ -42,6 +42,7 @@ def main(pcapfile):
     size = pcapfile.tell()
     pcapfile.seek(0, io.SEEK_SET)
     pos = 0
+    failed = []
     with click.progressbar(length=size) as bar:
         for ts, buf in dpkt.pcap.Reader(pcapfile):
             newpos = pcapfile.raw.tell()
@@ -54,7 +55,13 @@ def main(pcapfile):
             dhcp_msg_type = dhcp_option(p[DHCP].options, 'message-type')
             if dhcp_msg_type != 1 and dhcp_msg_type != 3:
                 continue
-            v6onlysupported = 108 in dhcp_option(p[DHCP].options, 'param_req_list')
+            try:
+                v6onlysupported = 108 in dhcp_option(p[DHCP].options, 'param_req_list')
+            except:
+                v6onlysupported = False
+                if srcmac not in failed:
+                    failed.append(srcmac)
+
             if srcmac not in devicestatus:
                  devicestatus[srcmac] = v6onlysupported
             elif devicestatus[srcmac] != v6onlysupported:
@@ -72,6 +79,10 @@ def main(pcapfile):
     
     print("Flapping:", len(flapping))
     print(", ".join(flapping))
+    
+    print("failed:", len(failed))
+    for mac in failed:
+        print("    "+mac)
 
 
 if __name__ == '__main__':
