@@ -62,7 +62,7 @@ def main(pcapfile):
     total = len(devicestatus)
     enabled = len([d for d in devicestatus.values() if d])
     print("Unique MACs:", total)
-    print("Option 108 enabled", "("+str(enabled), f"{100*enabled//total}%):")
+    print("Option 108 enabled", "("+str(enabled)+"/"+str(total), f"{100*enabled//total}%):")
     enabled = len([mac for mac, v6only in devicestatus.items() if v6only])
     
 
